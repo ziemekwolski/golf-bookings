@@ -11,6 +11,7 @@ class TeeTime < ActiveRecord::Base
   
   # == Validations ==========================================================
 
+  validates :booking_time, presence: true, uniqueness: true
   validate :validates_booking_time_interval
   
   # == Scopes ===============================================================

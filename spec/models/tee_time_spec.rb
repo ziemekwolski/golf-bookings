@@ -91,4 +91,22 @@ describe TeeTime do
 
   end
 
+  describe "only one slot available per user" do
+    let(:selected_booking_time) { (Date.today + 20.minutes).to_s(:db) }
+    let(:tee_time) {TeeTime.new(booking_time: selected_booking_time)}
+
+    before(:each) do
+      TeeTime.create!(booking_time: selected_booking_time)
+    end
+
+    it "already taken" do
+      expect(tee_time.valid?).to eq(false)
+      expect(tee_time.errors[:booking_time]).to eq(["has already been taken"])
+    end
+
+    it "not taken" do
+      tee_time.booking_time += 20.minutes
+      expect(tee_time.valid?).to eq(true)
+    end
+  end
 end
