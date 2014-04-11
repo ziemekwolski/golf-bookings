@@ -1,0 +1,14 @@
+DEFAULT: &defaults
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  username: 
+  password: 
+
+development:
+  <<: *defaults
+  database: golf_club_development
+
+test:
+  <<: *defaults
+  database: golf_club_test
