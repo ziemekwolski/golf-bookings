@@ -13,6 +13,7 @@ class TeeTime < ActiveRecord::Base
 
   validates :booking_time, presence: true, uniqueness: true
   validate :validates_booking_time_interval
+  validate :validates_open_hours
   
   # == Scopes ===============================================================
   
@@ -27,5 +28,12 @@ class TeeTime < ActiveRecord::Base
       errors.add(:booking_time, "must in intervals of #{BOOKING_INTERVAL}")
     end
   end
+
+  def validates_open_hours
+    if booking_time.present? && (booking_time.hour < 9 || booking_time.hour >= 17)
+      errors.add(:booking_time, "must be between 9am and 5pm")
+    end
+  end
+
 
 end
