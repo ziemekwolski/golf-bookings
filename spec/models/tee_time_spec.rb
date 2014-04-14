@@ -192,6 +192,75 @@ describe TeeTime do
         expect(tee_time.errors[:booking_time]).to eq(["must be between 9am and 5pm"])
       end
     end
+  end
 
+  describe "list available times" do
+    
+    # output is in this format: 
+    # ["09:00 AM", "09:20 AM", "09:40 AM", "10:00 AM", ... "04:20 PM", "04:40 PM"]
+    let(:all_available_times) {
+      start_time = today_at("9am")
+      end_time = today_at("5pm")
+      counter_time = start_time
+      output = []
+      loop do
+        output << counter_time.strftime("%I:%M %p")
+        counter_time += 20.minutes
+        break if counter_time >= end_time
+      end 
+      output
+    }
+
+    describe "valid date" do
+      it "list times in an array" do
+        expect(TeeTime.list_available_times_for(Time.zone.today.to_s(:db))).to eq(all_available_times)
+      end
+
+      it "list times in an array, exclude booked" do
+        TeeTime.create!(booking_time: today_at("9am"))
+        TeeTime.create!(booking_time: today_at("9:20am"))
+
+        expect(TeeTime.list_available_times_for(Time.zone.today.to_s(:db))).to eq(all_available_times - ["09:00 AM", "09:20 AM"])
+      end
+
+    end
+    describe "invalid date" do
+      it "blank date" do
+        expect(TeeTime.list_available_times_for(nil)).to eq([])
+      end
+
+      it "none existing date" do
+        expect(TeeTime.list_available_times_for("2012-99-00")).to eq([])
+      end
+
+      it "empty string" do
+        expect(TeeTime.list_available_times_for("")).to eq([])
+      end
+    end
+  end
+
+  describe "scopes" do
+    describe "within_date" do
+      before(:each) do
+        expect_any_instance_of(TeeTime).to receive(:validates_booking_time_interval).and_return(true)
+        expect_any_instance_of(TeeTime).to receive(:validates_open_hours).and_return(true)
+      end
+
+      it "include first record of the day" do
+        record = TeeTime.create!(booking_time: Time.zone.parse("2014-04-01").beginning_of_day)
+
+        expect(TeeTime.within_date("2014-04-01")).to eq([record])
+        expect(TeeTime.within_date("2014-03-31")).to eq([])
+        expect(TeeTime.within_date("2014-04-02")).to eq([])
+      end
+
+      it "include last record of the day" do
+        record = TeeTime.create!(booking_time: Time.zone.parse("2014-04-01").end_of_day)
+
+        expect(TeeTime.within_date("2014-04-01")).to eq([record])
+        expect(TeeTime.within_date("2014-03-31")).to eq([])
+        expect(TeeTime.within_date("2014-04-02")).to eq([])
+      end
+    end
   end
 end
