@@ -23,7 +23,7 @@ class TeeTime < ActiveRecord::Base
   # == Instance Methods =====================================================
   
   def validates_booking_time_interval
-    if booking_time.present? && booking_time.min % BOOKING_INTERVAL != 0 || booking_time.sec != 0
+    if booking_time.present? && (booking_time.min % BOOKING_INTERVAL != 0 || booking_time.sec != 0)
       errors.add(:booking_time, "must in intervals of #{BOOKING_INTERVAL}")
     end
   end

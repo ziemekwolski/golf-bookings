@@ -1,6 +1,17 @@
 require 'spec_helper'
 
 describe TeeTime do
+  describe "Tee Time requires booking time" do
+    let(:tee_time) {TeeTime.new}
+
+    it "booking time cannot be nil" do
+      expect(tee_time.booking_time).to eq(nil)
+      expect(tee_time.valid?).to eq(false)
+      expect(tee_time.errors[:booking_time]).to eq(["can't be blank"])
+      expect(tee_time.errors.count).to eq(1)
+    end
+  end
+
   describe "Tee times are separated by 20 minutes" do
     let(:tee_time) {TeeTime.new}
 
