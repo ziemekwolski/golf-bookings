@@ -30,5 +30,21 @@ describe TeeTimesController do
     end
   end
 
+  describe "create booking" do
+    it "create" do 
+      expect{
+        post :create, tee_time: {booking_time: today_at("9:20am")}
+      }.to change(TeeTime, :count).by(1)
+      expect(response).to redirect_to(root_url(date:today_at("9:20am").to_date))
+    end
+
+    it "invalid create" do
+      expect{
+        post :create, tee_time: {booking_time: ""}
+      }.to change(TeeTime, :count).by(0)
+      expect(response).to redirect_to(root_url)
+    end
+  end
+
 
 end

@@ -7,10 +7,6 @@ describe TeeTime do
     expect(tee_time.errors.full_messages).to eq([])
   end
 
-  def today_at(time)
-    Time.zone.parse("#{Time.zone.today} #{time}")
-  end
-
   describe "Tee Time requires booking time" do
     let(:tee_time) {TeeTime.new}
 
