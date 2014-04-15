@@ -1,0 +1,14 @@
+%h1= "Available Times for #{@selected_date}"
+- tomorrow = (@selected_date + 1.day).to_s(:db)
+- yesterday = (@selected_date - 1.day).to_s(:db)
+
+= link_to "<< Previous Day", root_path(date: yesterday)
+= link_to "Next Day >>", root_path(date: tomorrow)
+
+- TeeTime::ALL_AVAILABLE_TIMES.each do |time|
+  %h3
+    %p{style: "text-align: center;"}
+      - if @booked_times[time].present?
+        = "Booked - #{time}"
+      - else
+        = link_to "Available - #{time}", "#"

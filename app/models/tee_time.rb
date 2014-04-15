@@ -25,10 +25,8 @@ class TeeTime < ActiveRecord::Base
   # == Scopes ===============================================================
   
   scope :within_date, ->(datetime) { 
-    parsed_datetime = Time.zone.parse(datetime) rescue Time.zone.today
-
-    start_time = parsed_datetime.beginning_of_day
-    end_time = parsed_datetime.end_of_day
+    start_time = datetime.beginning_of_day
+    end_time = datetime.end_of_day
     where("booking_time >= ? and booking_time <= ? ", start_time, end_time) 
   }
 
@@ -36,12 +34,11 @@ class TeeTime < ActiveRecord::Base
   
   # == Class Methods ========================================================
 
-  def self.list_available_times_for(date)
-    parsed_date = Time.zone.parse(date.to_s) rescue nil
-    return [] if parsed_date.blank?
+  def self.booked_times_by_time(date)
+    raise ArgumentError if date.blank?
+    parsed_date = Time.zone.parse(date.to_s).to_date
 
-    booked_times = self.within_date(date).pluck(:booking_time).collect {|t| t.strftime("%I:%M %p") }
-    ALL_AVAILABLE_TIMES - booked_times
+    self.within_date(date).inject({}) {|result, data| result[data.booking_time.strftime("%I:%M %p")] = data; result}
   end
   
   # == Instance Methods =====================================================
