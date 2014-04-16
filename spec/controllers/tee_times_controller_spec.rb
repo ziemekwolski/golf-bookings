@@ -46,5 +46,20 @@ describe TeeTimesController do
     end
   end
 
+  describe "Cancel booking" do
+    let(:tee_time) {TeeTime.create!(booking_time: today_at("9am"))}
+
+    before(:each){
+      tee_time
+    }
+    
+    it "valid cancel" do
+      expect{
+        delete :destroy, {tee_time: {booking_time: tee_time.booking_time.to_s}}
+      }.to change(TeeTime, :count).by(-1)
+      expect(response).to redirect_to(root_url(date: tee_time.booking_time.to_date))
+    end
+  end
+
 
 end

@@ -9,8 +9,12 @@
 
 - TeeTime::ALL_AVAILABLE_TIMES.each do |time|
   %h3
-    %p{style: "text-align: center;"}
-      - if @booked_times[time].present?
-        = "Booked - #{time}"
-      - else
-        = link_to "Available - #{time}", tee_times_path({tee_time: {booking_time: "#{@selected_date} #{time}"}}), :method => :post
+    .row.text-center
+      .col-md-12
+        - if @booked_times[time].present?
+          -booking = @booked_times[time]
+          = "Booked - #{time}"
+          = link_to "x", tee_times_path({tee_time: {booking_time: booking.booking_time.to_s}}), :method => :delete, :data => { :confirm => 'Are you sure want to cancel?' }
+
+        - else
+          = link_to "Available - #{time}", tee_times_path({tee_time: {booking_time: "#{@selected_date} #{time}"}}), :method => :post

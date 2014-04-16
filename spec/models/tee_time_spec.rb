@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+
 describe TeeTime do
 
   def is_valid(tee_time)
@@ -254,6 +255,29 @@ describe TeeTime do
         expect(TeeTime.within_date(Time.zone.parse("2014-04-01"))).to eq([record])
         expect(TeeTime.within_date(Time.zone.parse("2014-03-31"))).to eq([])
         expect(TeeTime.within_date(Time.zone.parse("2014-04-02"))).to eq([])
+      end
+    end
+
+    describe "in_present" do
+      let(:present_one) {TeeTime.create!(booking_time: today_at("9am"))}
+      let(:past_one) {TeeTime.create!(booking_time: (today_at("9am") - 1.day))}
+
+      before(:each){
+        present_one
+        past_one
+      }
+      
+      it "should find only today's bookings" do
+        expect(TeeTime.in_present.count).to eq(1)
+        expect(TeeTime.in_present.first).to eq(present_one)
+      end
+    end
+
+    describe "by_booking_times" do
+      let(:tee_time) {tee_times(:default)}
+
+      it "should find by booking_time" do
+        expect(TeeTime.by_booking_times(tee_time.booking_time).first).to eq(tee_time)
       end
     end
   end

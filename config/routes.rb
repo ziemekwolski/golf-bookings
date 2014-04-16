@@ -6,7 +6,7 @@ GolfClub::Application.routes.draw do
   # You can have the root of your site routed with "root"
   root 'tee_times#index'
 
-  resource :tee_times, only: [:index, :create]
+  resource :tee_times, only: [:index, :create, :destroy]
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
