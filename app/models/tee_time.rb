@@ -25,6 +25,7 @@ class TeeTime < ActiveRecord::Base
   validates :user, :club, presence: true
   validate :validates_booking_time_interval
   validate :validates_open_hours
+  validate :validates_total_number_of_bookings, on: :create
 
   
   # == Scopes ===============================================================
@@ -60,6 +61,12 @@ class TeeTime < ActiveRecord::Base
   def validates_open_hours
     if booking_time.present? && (booking_time.hour < 9 || booking_time.hour >= 17)
       errors.add(:booking_time, "must be between 9am and 5pm")
+    end
+  end
+
+  def validates_total_number_of_bookings
+    if self.user.present? && self.user.tee_times.in_present.count >= 2
+      errors.add(:booking_time, "Users can only have two bookings")
     end
   end
 

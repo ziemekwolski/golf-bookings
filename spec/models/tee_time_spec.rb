@@ -131,10 +131,11 @@ describe TeeTime do
 
     it "already taken" do
       expect(tee_time.valid?).to eq(false)
-      expect(tee_time.errors[:booking_time]).to eq(["has already been taken"])
+      expect(tee_time.errors[:booking_time]).to include("has already been taken")
     end
 
     it "not taken" do
+      expect_any_instance_of(TeeTime).to receive(:validates_total_number_of_bookings).and_return(true)
       tee_time.booking_time += 20.minutes
       is_valid(tee_time)
     end
@@ -227,7 +228,9 @@ describe TeeTime do
 
       it "list times in an array, exclude booked" do
         first = TeeTime.create!(valid_params(booking_time: today_at("9am")))
-        second = TeeTime.create!(valid_params(booking_time: today_at("9:20am")))
+        second = TeeTime.new(valid_params(booking_time: today_at("9:20am")))
+        expect(second).to receive(:validates_total_number_of_bookings).and_return(true)
+        second.save!
 
         expect(TeeTime.booked_times_by_time(Time.zone.today)).to eq({"09:00 AM" => first, "09:20 AM" => second})
       end
@@ -245,6 +248,7 @@ describe TeeTime do
       end
     end
   end
+
 
   describe "scopes" do
 
@@ -294,6 +298,33 @@ describe TeeTime do
         expect(TeeTime.within_date(Time.zone.parse("2014-04-01"))).to eq([record])
         expect(TeeTime.within_date(Time.zone.parse("2014-03-31"))).to eq([])
         expect(TeeTime.within_date(Time.zone.parse("2014-04-02"))).to eq([])
+      end
+    end
+
+    describe "validates_total_number_of_bookings" do
+      let(:current_time) {Time.zone.today.to_time}
+      let(:first_tee_time) {TeeTime.new(valid_params(booking_time: (today_at("9am"))))}
+      let(:second_tee_time) {TeeTime.new(valid_params(booking_time: (today_at("9:20am"))))}
+      let(:third_tee_time) {TeeTime.new(valid_params(booking_time: (today_at("9:40am"))))}
+
+      before(:each) do
+        allow(Time.zone).to receive(:now).and_return(current_time)
+      end
+
+      it "user can only create two bookings" do
+        first_tee_time.save!
+        second_tee_time.save!
+        expect(user.tee_times.count).to eq(3)
+        expect(user.tee_times.in_present.count).to eq(2)
+        expect(third_tee_time.valid?).to eq(false)
+        expect(third_tee_time.errors[:booking_time]).to include("Users can only have two bookings")
+      end
+
+      it "should exclude booking in the past" do
+        second_tee_time.save!
+        expect(user.tee_times.count).to eq(2)
+        expect(user.tee_times.in_present.count).to eq(1)
+        expect(third_tee_time.valid?).to eq(true)
       end
     end
 
