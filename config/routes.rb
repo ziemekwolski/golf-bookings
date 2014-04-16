@@ -4,13 +4,19 @@ GolfClub::Application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  root 'tee_times#index'
+  root 'pages#welcome'
 
-  resource :tee_times, only: [:index, :create, :destroy]
+  resources :tee_times, only: [:index, :create, :destroy]
 
   controller :users do
     get :new,       path: '/signup', as: "signup"
     post :create,   path: '/signup'
+  end
+
+  controller :sessions do
+    get :new,       path: '/login', as: "login"
+    post :create,   path: '/login'
+    get :destroy,   path: 'logout', as: "logout"
   end
 
   # Example of regular route:

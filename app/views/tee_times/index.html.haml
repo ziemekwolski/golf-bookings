@@ -1,11 +1,11 @@
 %h1= "Available Times for #{@selected_date}"
-- tomorrow = (@selected_date + 1.day).to_s(:db)
-- yesterday = (@selected_date - 1.day).to_s(:db)
+- next_day = (@selected_date + 1.day).to_s(:db)
+- previous_day = (@selected_date - 1.day).to_s(:db)
 
 .row
   .col-md-12
-    = link_to "<< Previous Day", root_path(date: yesterday)
-    = link_to "Next Day >>", root_path(date: tomorrow)
+    = link_to "<< Previous Day", tee_times_path(date: previous_day)
+    = link_to "Next Day >>", tee_times_path(date: next_day)
 
 - TeeTime::ALL_AVAILABLE_TIMES.each do |time|
   %h3
@@ -14,7 +14,7 @@
         - if @booked_times[time].present?
           -booking = @booked_times[time]
           = "Booked - #{time}"
-          = link_to "x", tee_times_path({tee_time: {booking_time: booking.booking_time.to_s}}), :method => :delete, :data => { :confirm => 'Are you sure want to cancel?' }
+          = link_to "x", tee_time_path(booking), :method => :delete, :data => { :confirm => 'Are you sure want to cancel?' }
 
         - else
           = link_to "Available - #{time}", tee_times_path({tee_time: {booking_time: "#{@selected_date} #{time}"}}), :method => :post

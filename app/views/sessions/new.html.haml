@@ -1,0 +1,22 @@
+.col-md-4
+
+.col-md-4
+  
+  = form_for :session, url: login_path do|f|
+    .panel.panel-default
+      .panel-body
+        %h1
+          Login
+        .form-group
+          = f.label :email
+          = f.text_field :email, class: "form-control"
+
+        .form-group
+          = f.label :password
+          = f.password_field :password, class: "form-control", value: ""
+
+        = submit_tag 'Login', class: "btn btn-primary"
+        %hr
+        Don't have an account?
+        = link_to "Sign up", signup_path
+

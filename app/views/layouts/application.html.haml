@@ -20,5 +20,8 @@
     = csrf_meta_tags
   %body
     .container
+      - if @current_user
+        = "Logged in as: #{@current_user.name}"
+        = link_to "Logout", logout_url
       = render "layouts/alerts"
       = yield

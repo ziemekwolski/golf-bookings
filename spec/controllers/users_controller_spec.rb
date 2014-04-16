@@ -24,7 +24,8 @@ describe UsersController do
       expect{
         post :create, user: valid_params
       }.to change{User.count}.by(1)
-      expect(response).to redirect_to root_url
+      expect(response).to redirect_to login_url
+      
     end
 
     it "Failed signup" do
