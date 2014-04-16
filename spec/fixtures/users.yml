@@ -1,0 +1,5 @@
+default:
+  name: Bob
+  email: default@test.com
+  salt: PtnyQCpSzSUDfqqf3kzc
+  crypted_password: "$2a$10$Vgqls8kteANswROro2NDBOLc4urWa0yV6/gmqlMwB.ufQFf6060Sy" #asdfasdf

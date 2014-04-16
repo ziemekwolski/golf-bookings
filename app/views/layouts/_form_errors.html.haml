@@ -1,0 +1,9 @@
+- if object.errors.any?
+  .panel.panel-danger
+    .panel-heading
+      = "Please correct the #{pluralize(object.errors.count, "error")} below:"
+    .panel-body
+      %ul
+        - object.errors.full_messages.each do |msg|
+          %li= msg
+

@@ -1,0 +1,4 @@
+- {notice: "alert-success" , alert: "alert-danger"}.each do |type, class_name|
+  - if flash[type].present?
+    .alert{class: class_name}
+      = flash[type]

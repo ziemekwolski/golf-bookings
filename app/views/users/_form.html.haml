@@ -1,0 +1,22 @@
+= form_for @user, url: signup_url do |f|
+  .panel.panel-default
+    .panel-body
+      %h1
+        Signup
+      .form-group
+        = f.label :name
+        = f.text_field :name, class: "form-control"
+
+      .form-group
+        = f.label :email
+        = f.text_field :email, class: "form-control"
+
+      .form-group
+        = f.label :password
+        = f.password_field :password, class: "form-control"
+
+      .form-group
+        = f.label :password_confirmation
+        = f.password_field :password_confirmation, class: "form-control"
+
+      = f.submit 'Signup', class: "btn btn-primary"

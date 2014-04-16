@@ -8,6 +8,11 @@ GolfClub::Application.routes.draw do
 
   resource :tee_times, only: [:index, :create, :destroy]
 
+  controller :users do
+    get :new,       path: '/signup', as: "signup"
+    post :create,   path: '/signup'
+  end
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
