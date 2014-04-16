@@ -2,6 +2,7 @@ class TeeTime < ActiveRecord::Base
   # == Constants ============================================================
   
   BOOKING_INTERVAL = 20
+  CANCEL_CUTOFF = 1.hour
   OPEN_TIME = "9 AM"
   CLOSE_TIME = "5 PM"
 
@@ -26,7 +27,6 @@ class TeeTime < ActiveRecord::Base
   validate :validates_booking_time_interval
   validate :validates_open_hours
   validate :validates_total_number_of_bookings, on: :create
-
   
   # == Scopes ===============================================================
   
@@ -35,6 +35,8 @@ class TeeTime < ActiveRecord::Base
     end_time = datetime.end_of_day
     where("booking_time >= ? and booking_time <= ? ", start_time, end_time) 
   }
+
+  scope :exclude_less_then_hours_before, ->(length_in_time){ where("booking_time >= ?", (Time.zone.now + length_in_time))}
 
   scope :by_booking_times, ->(datetime) { where(booking_time: datetime)}
   scope :in_present, -> {where("booking_time >= ?", Time.zone.now)}
