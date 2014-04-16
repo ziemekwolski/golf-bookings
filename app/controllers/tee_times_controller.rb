@@ -16,7 +16,7 @@ class TeeTimesController < ApplicationController
     if @tee_time.save
       redirect_to club_tee_times_url(club_id: params[:club_id], date: @tee_time.booking_time.to_date),:notice => "Time Booked!"
     else
-      redirect_to club_tee_times_url(params[:club_id]), alert: "Invalid Time"
+      redirect_to club_tee_times_url(params[:club_id]), alert: @tee_time.errors.full_messages.join(",")
     end
   end
 
