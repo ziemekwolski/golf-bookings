@@ -21,7 +21,7 @@ class TeeTimesController < ApplicationController
   end
 
   def destroy
-    @tee_time = @scope.find(params[:id])
+    @tee_time = @scope.exclude_less_then_hours_before(TeeTime::CANCEL_CUTOFF).find(params[:id])
 
     if @tee_time.destroy
       redirect_to club_tee_times_url(club_id: params[:club_id], date: @tee_time.booking_time.to_date), notice: "booking cancelled"

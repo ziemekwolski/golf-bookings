@@ -204,6 +204,29 @@ describe TeeTime do
     end
   end
 
+  describe "validates_total_number_of_bookings" do
+    let(:first_tee_time) {TeeTime.new(valid_params(booking_time: (today_at("9am"))))}
+    let(:second_tee_time) {TeeTime.new(valid_params(booking_time: (today_at("9:20am"))))}
+    let(:third_tee_time) {TeeTime.new(valid_params(booking_time: (today_at("9:40am"))))}
+
+    it "user can only create two bookings" do
+      first_tee_time.save!
+      second_tee_time.save!
+      expect(user.tee_times.count).to eq(3)
+      expect(user.tee_times.in_present.count).to eq(2)
+      expect(third_tee_time.valid?).to eq(false)
+      expect(third_tee_time.errors[:booking_time]).to include("Users can only have two bookings")
+    end
+
+    it "should exclude booking in the past" do
+      second_tee_time.save!
+      expect(user.tee_times.count).to eq(2)
+      expect(user.tee_times.in_present.count).to eq(1)
+      expect(third_tee_time.valid?).to eq(true)
+    end
+  end
+
+
   describe "list available times" do
     
     # output is in this format: 
@@ -274,27 +297,38 @@ describe TeeTime do
       end
     end
 
-    describe "validates_total_number_of_bookings" do
-      let(:first_tee_time) {TeeTime.new(valid_params(booking_time: (today_at("9am"))))}
-      let(:second_tee_time) {TeeTime.new(valid_params(booking_time: (today_at("9:20am"))))}
-      let(:third_tee_time) {TeeTime.new(valid_params(booking_time: (today_at("9:40am"))))}
-
-      it "user can only create two bookings" do
-        first_tee_time.save!
-        second_tee_time.save!
-        expect(user.tee_times.count).to eq(3)
-        expect(user.tee_times.in_present.count).to eq(2)
-        expect(third_tee_time.valid?).to eq(false)
-        expect(third_tee_time.errors[:booking_time]).to include("Users can only have two bookings")
+    describe "exclude_hours_before" do
+      let(:current_time) {Time.zone.today}
+      let(:tee_time) {TeeTime.new(valid_params(booking_time: Time.zone.now))}
+      
+      before(:each) do
+        expect_any_instance_of(TeeTime).to receive(:validates_booking_time_interval).and_return(true)
+        expect_any_instance_of(TeeTime).to receive(:validates_open_hours).and_return(true)
+        allow(Time.zone).to receive(:now).and_return(current_time)
       end
 
-      it "should exclude booking in the past" do
-        second_tee_time.save!
-        expect(user.tee_times.count).to eq(2)
-        expect(user.tee_times.in_present.count).to eq(1)
-        expect(third_tee_time.valid?).to eq(true)
+      it "should not list if happening 59 mintues 59 second" do
+        tee_time.booking_time += (59.minute + 59.seconds)
+        tee_time.save!
+
+        expect(TeeTime.exclude_less_then_hours_before(1.hour)).to_not include(tee_time)
+      end
+
+      it "should not list if happening 1hour ago" do
+        tee_time.booking_time += (1.hour)
+        tee_time.save!
+
+        expect(TeeTime.exclude_less_then_hours_before(1.hour)).to include(tee_time)
+      end
+
+      it "should not list if happening 1 hour 1 second" do
+        tee_time.booking_time += (1.hour + 1.second)
+        tee_time.save!
+
+        expect(TeeTime.exclude_less_then_hours_before(1.hour)).to include(tee_time)
       end
     end
+
 
     describe "in_present" do
       let(:present_one) {TeeTime.new(valid_params(booking_time: today_at("9am")))}
