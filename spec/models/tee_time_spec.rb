@@ -3,11 +3,13 @@ require 'spec_helper'
 
 describe TeeTime do
   let(:user) {users(:default)}
+  let(:club) {clubs(:default)}
 
   def valid_params(options = {})
     {
       user: user,
-      booking_time: today_at("9am")
+      booking_time: today_at("9am"),
+      club: club
     }.merge(options)
   end
 
@@ -24,7 +26,8 @@ describe TeeTime do
       expect(tee_time.valid?).to eq(false)
       expect(tee_time.errors[:booking_time]).to eq(["can't be blank"])
       expect(tee_time.errors[:user]).to eq(["can't be blank"])
-      expect(tee_time.errors.count).to eq(2)
+      expect(tee_time.errors[:club]).to eq(["can't be blank"])
+      expect(tee_time.errors.count).to eq(3)
     end
   end
 

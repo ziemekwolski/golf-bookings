@@ -6,7 +6,9 @@ GolfClub::Application.routes.draw do
   # You can have the root of your site routed with "root"
   root 'pages#welcome'
 
-  resources :tee_times, only: [:index, :create, :destroy]
+  resources :clubs do
+    resources :tee_times, only: [:index, :create, :destroy]
+  end
 
   controller :users do
     get :new,       path: '/signup', as: "signup"
@@ -19,7 +21,6 @@ GolfClub::Application.routes.draw do
     get :destroy,   path: 'logout', as: "logout"
   end
 
-  resources :clubs
 
 
   # Example of regular route:
