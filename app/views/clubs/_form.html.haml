@@ -1,0 +1,9 @@
+.row
+  .col-md-6
+    = form_for @club do |f|
+
+      .form-group
+        = f.label :name
+        = f.text_field :name, class: "form-control"
+      .actions
+        = f.submit 'Save', class: "btn btn-primary"

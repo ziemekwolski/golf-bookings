@@ -19,6 +19,9 @@ GolfClub::Application.routes.draw do
     get :destroy,   path: 'logout', as: "logout"
   end
 
+  resources :clubs
+
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
