@@ -14,7 +14,8 @@
         - if @booked_times[time].present?
           -booking = @booked_times[time]
           = "Booked - #{time}"
-          = link_to "x", tee_time_path(booking), :method => :delete, :data => { :confirm => 'Are you sure want to cancel?' }
+          - if (booking.user == @current_user)
+            = link_to "x", tee_time_path(booking), :method => :delete, :data => { :confirm => 'Are you sure want to cancel?' }
 
         - else
           = link_to "Available - #{time}", tee_times_path({tee_time: {booking_time: "#{@selected_date} #{time}"}}), :method => :post

@@ -2,6 +2,14 @@ require 'spec_helper'
 
 
 describe TeeTime do
+  let(:user) {users(:default)}
+
+  def valid_params(options = {})
+    {
+      user: user,
+      booking_time: today_at("9am")
+    }.merge(options)
+  end
 
   def is_valid(tee_time)
     tee_time.valid?
@@ -15,12 +23,13 @@ describe TeeTime do
       expect(tee_time.booking_time).to eq(nil)
       expect(tee_time.valid?).to eq(false)
       expect(tee_time.errors[:booking_time]).to eq(["can't be blank"])
-      expect(tee_time.errors.count).to eq(1)
+      expect(tee_time.errors[:user]).to eq(["can't be blank"])
+      expect(tee_time.errors.count).to eq(2)
     end
   end
 
   describe "Tee times are separated by 20 minutes" do
-    let(:tee_time) {TeeTime.new}
+    let(:tee_time) {TeeTime.new(valid_params)}
 
     describe "invalid" do
       it "should not accept 1 minutes passed" do
@@ -111,10 +120,10 @@ describe TeeTime do
 
   describe "only one slot available per user" do
     let(:selected_booking_time) { (today_at("9am")).to_s(:db) }
-    let(:tee_time) {TeeTime.new(booking_time: selected_booking_time)}
+    let(:tee_time) {TeeTime.new(valid_params(booking_time: selected_booking_time))}
 
     before(:each) do
-      TeeTime.create!(booking_time: selected_booking_time)
+      TeeTime.create!(valid_params(booking_time: selected_booking_time))
     end
 
     it "already taken" do
@@ -129,7 +138,7 @@ describe TeeTime do
   end
 
   describe "only available between 9am to 5pm" do
-    let(:tee_time) {TeeTime.new}
+    let(:tee_time) {TeeTime.new(valid_params)}
 
     # stubbing out the interval time, to test opening hours in isolation
     # incase the interval time ever changes.
@@ -214,8 +223,8 @@ describe TeeTime do
       end
 
       it "list times in an array, exclude booked" do
-        first = TeeTime.create!(booking_time: today_at("9am"))
-        second = TeeTime.create!(booking_time: today_at("9:20am"))
+        first = TeeTime.create!(valid_params(booking_time: today_at("9am")))
+        second = TeeTime.create!(valid_params(booking_time: today_at("9:20am")))
 
         expect(TeeTime.booked_times_by_time(Time.zone.today)).to eq({"09:00 AM" => first, "09:20 AM" => second})
       end
@@ -242,7 +251,7 @@ describe TeeTime do
       end
 
       it "include first record of the day" do
-        record = TeeTime.create!(booking_time: Time.zone.parse("2014-04-01").beginning_of_day)
+        record = TeeTime.create!(valid_params(booking_time: Time.zone.parse("2014-04-01").beginning_of_day))
 
         expect(TeeTime.within_date(Time.zone.parse("2014-04-01"))).to eq([record])
         expect(TeeTime.within_date(Time.zone.parse("2014-03-31"))).to eq([])
@@ -250,7 +259,7 @@ describe TeeTime do
       end
 
       it "include last record of the day" do
-        record = TeeTime.create!(booking_time: Time.zone.parse("2014-04-01").end_of_day)
+        record = TeeTime.create!(valid_params(booking_time: Time.zone.parse("2014-04-01").end_of_day))
 
         expect(TeeTime.within_date(Time.zone.parse("2014-04-01"))).to eq([record])
         expect(TeeTime.within_date(Time.zone.parse("2014-03-31"))).to eq([])
@@ -259,8 +268,8 @@ describe TeeTime do
     end
 
     describe "in_present" do
-      let(:present_one) {TeeTime.create!(booking_time: today_at("9am"))}
-      let(:past_one) {TeeTime.create!(booking_time: (today_at("9am") - 1.day))}
+      let(:present_one) {TeeTime.create!(valid_params(booking_time: today_at("9am")))}
+      let(:past_one) {TeeTime.create!(valid_params(booking_time: (today_at("9am") - 1.day)))}
 
       before(:each){
         present_one

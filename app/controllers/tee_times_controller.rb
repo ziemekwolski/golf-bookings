@@ -10,7 +10,7 @@ class TeeTimesController < ApplicationController
   end
 
   def create
-    @tee_time = TeeTime.new(tee_times_params)
+    @tee_time = @current_user.tee_times.new(tee_times_params)
     if @tee_time.save
       redirect_to tee_times_url(date: @tee_time.booking_time.to_date),:notice => "Time Booked!"
     else
@@ -37,7 +37,7 @@ private
   end
 
   def find_tee_time
-    @tee_time = TeeTime.in_present.find(params[:id])
+    @tee_time = @current_user.tee_times.in_present.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to tee_times_url, error: "Could not find booking time" 
   end

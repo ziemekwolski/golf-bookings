@@ -9,7 +9,9 @@ class User < ActiveRecord::Base
   authenticates_with_sorcery!
 
   # == Relationships ========================================================
-  
+
+  has_many :tee_times
+    
   # == Validations ==========================================================
   
   validates :name, presence: true

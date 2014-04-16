@@ -15,12 +15,16 @@ class TeeTime < ActiveRecord::Base
   # == Extensions ===========================================================
   
   # == Relationships ========================================================
-  
+
+  belongs_to :user
+
   # == Validations ==========================================================
 
   validates :booking_time, presence: true, uniqueness: true
+  validates :user, presence: true
   validate :validates_booking_time_interval
   validate :validates_open_hours
+
   
   # == Scopes ===============================================================
   
