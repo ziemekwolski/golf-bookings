@@ -4,8 +4,11 @@
 
 .row
   .col-md-12
-    = link_to "<< Previous Day", tee_times_path(date: previous_day)
-    = link_to "Next Day >>", tee_times_path(date: next_day)
+    = link_to "back to clubs", clubs_url, class: "btn btn-primary"
+.row
+  .col-md-12
+    = link_to "<< Previous Day", club_tee_times_url({club_id: @club, date: previous_day})
+    = link_to "Next Day >>", club_tee_times_url(club_id: @club, date: next_day)
 
 - TeeTime::ALL_AVAILABLE_TIMES.each do |time|
   %h3
@@ -15,9 +18,9 @@
           -booking = @booked_times[time]
           = "Booked - #{time}"
           - if (booking.user == @current_user)
-            = link_to "x", tee_time_path(booking), :method => :delete, :data => { :confirm => 'Are you sure want to cancel?' }
+            = link_to "x", club_tee_time_url(@club, booking), :method => :delete, :data => { :confirm => 'Are you sure want to cancel?' }
 
         - elsif Time.zone.parse("#{@selected_date} #{time}") > Time.zone.now
-          = link_to "Available - #{time}", tee_times_path({tee_time: {booking_time: "#{@selected_date} #{time}"}}), :method => :post
+          = link_to "Available - #{time}", club_tee_times_url({club_id: @club, tee_time: {booking_time: "#{@selected_date} #{time}"}}), :method => :post
         - else
           = time

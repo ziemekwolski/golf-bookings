@@ -9,10 +9,12 @@
         %th
         %th
         %th
+        %th
 
       - @clubs.each do |club|
         %tr
           %td= club.name
+          %td= link_to 'book Tee Times', club_tee_times_url(club)
           %td= link_to 'Show', club
           %td= link_to 'Edit', edit_club_path(club)
           %td= link_to 'Destroy', club, :method => :delete, :data => { :confirm => 'Are you sure?' }
