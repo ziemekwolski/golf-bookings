@@ -17,11 +17,12 @@ class TeeTime < ActiveRecord::Base
   # == Relationships ========================================================
 
   belongs_to :user
+  belongs_to :club
 
   # == Validations ==========================================================
 
-  validates :booking_time, presence: true, uniqueness: true
-  validates :user, presence: true
+  validates :booking_time, presence: true, uniqueness: {scope: :club_id}
+  validates :user, :club, presence: true
   validate :validates_booking_time_interval
   validate :validates_open_hours
 

@@ -10,6 +10,7 @@ class Club < ActiveRecord::Base
   # == Validations ==========================================================
   
   validates :name, presence: true  
+  has_many :tee_times, :dependent => :delete_all
   # == Scopes ===============================================================
   
   # == Callbacks ============================================================

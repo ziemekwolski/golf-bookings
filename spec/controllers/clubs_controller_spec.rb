@@ -22,6 +22,7 @@ describe ClubsController do
 
   let(:user) {users(:default)}
 
+
   before(:each) do
     login_user(user)
   end
@@ -35,7 +36,7 @@ describe ClubsController do
     it "assigns all clubs as @clubs" do
       club = Club.create! valid_attributes
       get :index, {}
-      expect(assigns(:clubs)).to eq([club])
+      expect(assigns(:clubs).count).to eq(2)
     end
   end
 

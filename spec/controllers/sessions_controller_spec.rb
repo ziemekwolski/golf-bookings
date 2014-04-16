@@ -25,7 +25,7 @@ describe SessionsController do
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', session: valid_login
-      expect(response).to redirect_to tee_times_url
+      expect(response).to redirect_to clubs_url
       
     end
   end
