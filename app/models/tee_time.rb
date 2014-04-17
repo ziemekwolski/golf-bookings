@@ -35,7 +35,7 @@ class TeeTime < ActiveRecord::Base
   }
 
   scope :by_booking_times, ->(datetime) { where(booking_time: datetime)}
-  scope :in_present, -> {where("booking_time >= ?", Time.zone.today.beginning_of_day)}
+  scope :in_present, -> {where("booking_time >= ?", Time.zone.now)}
 
   # == Callbacks ============================================================
   

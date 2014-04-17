@@ -55,10 +55,15 @@ describe TeeTimesController do
   end
 
   describe "Cancel booking" do
+    let(:current_time) {Time.zone.today.to_time}
     let(:second_user) {users(:second)}
     let(:tee_time) {TeeTime.create!({booking_time: today_at("9am"), user: user})}
     let(:past_one) {TeeTime.create!({booking_time: (today_at("9am") - 1.day), user: user})}
     let(:tee_time_different_user) {TeeTime.create!({booking_time: today_at("9:20am"), user: second_user})}
+    
+    before(:each) do
+      allow(Time.zone).to receive(:now).and_return(current_time)
+    end
 
     it "valid cancel" do
       tee_time

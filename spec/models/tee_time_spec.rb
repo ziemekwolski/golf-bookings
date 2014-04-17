@@ -244,6 +244,33 @@ describe TeeTime do
   end
 
   describe "scopes" do
+
+    describe "in_present" do
+      let(:current_time) {Time.zone.today.to_time}
+
+      before(:each) do
+        expect_any_instance_of(TeeTime).to receive(:validates_booking_time_interval).and_return(true)
+        expect_any_instance_of(TeeTime).to receive(:validates_open_hours).and_return(true)
+        allow(Time.zone).to receive(:now).and_return(current_time)
+      end
+
+      it "one second in the past" do
+        record = TeeTime.create!(valid_params(booking_time: Time.zone.now - 1.second))
+        expect(TeeTime.in_present).to_not include(record)
+      end
+
+      it "at current time" do
+        record = TeeTime.create!(valid_params(booking_time: Time.zone.now))
+        expect(TeeTime.in_present).to include(record)
+      end
+
+      it "one second in the future" do
+        record = TeeTime.create!(valid_params(booking_time: Time.zone.now))
+        expect(TeeTime.in_present).to include(record)
+      end
+
+    end
+
     describe "within_date" do
       before(:each) do
         expect_any_instance_of(TeeTime).to receive(:validates_booking_time_interval).and_return(true)
@@ -264,21 +291,6 @@ describe TeeTime do
         expect(TeeTime.within_date(Time.zone.parse("2014-04-01"))).to eq([record])
         expect(TeeTime.within_date(Time.zone.parse("2014-03-31"))).to eq([])
         expect(TeeTime.within_date(Time.zone.parse("2014-04-02"))).to eq([])
-      end
-    end
-
-    describe "in_present" do
-      let(:present_one) {TeeTime.create!(valid_params(booking_time: today_at("9am")))}
-      let(:past_one) {TeeTime.create!(valid_params(booking_time: (today_at("9am") - 1.day)))}
-
-      before(:each){
-        present_one
-        past_one
-      }
-      
-      it "should find only today's bookings" do
-        expect(TeeTime.in_present.count).to eq(1)
-        expect(TeeTime.in_present.first).to eq(present_one)
       end
     end
 

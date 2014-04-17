@@ -17,5 +17,7 @@
           - if (booking.user == @current_user)
             = link_to "x", tee_time_path(booking), :method => :delete, :data => { :confirm => 'Are you sure want to cancel?' }
 
-        - else
+        - elsif Time.zone.parse("#{@selected_date} #{time}") > Time.zone.now
           = link_to "Available - #{time}", tee_times_path({tee_time: {booking_time: "#{@selected_date} #{time}"}}), :method => :post
+        - else
+          = time
