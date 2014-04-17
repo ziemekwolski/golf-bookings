@@ -1,5 +1,13 @@
-== README
+# Golf Bookings Programming Challenge
 
-Release 1.0.0 -- hotfix
-* manually fix the tee times data to associate to a user.
+Where you can book all your booking times.
 
+## Requires
+
+* Postgres
+* Rails 4
+* Ruby 1.9
+
+## Setup
+
+Configure your own database.yml, run rake db:migrate
