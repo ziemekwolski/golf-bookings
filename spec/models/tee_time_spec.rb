@@ -222,6 +222,13 @@ describe TeeTime do
       expect(third_tee_time.valid?).to eq(false)
       expect(third_tee_time.errors[:booking_time]).to include("Users can only have two bookings")
     end
+
+    it "should exclude booking in the past" do
+      second_tee_time.save!
+      expect(user.tee_times.count).to eq(2)
+      expect(user.tee_times.in_present.count).to eq(1)
+      expect(third_tee_time.valid?).to eq(true)
+    end
   end
 
 
