@@ -17,7 +17,7 @@
         - if @booked_times[time].present?
           -booking = @booked_times[time]
           = "Booked - #{time}"
-          - if (booking.user == @current_user) && (Time.zone.now + TeeTime::CANCEL_CUTOFF) < Time.zone.parse(time)
+          - if (booking.user == @current_user) && (Time.zone.now + TeeTime::CANCEL_CUTOFF) < Time.zone.parse("#{@selected_date} #{time}")
             = link_to "x", club_tee_time_url(@club, booking), :method => :delete, :data => { :confirm => 'Are you sure want to cancel?' }
 
         - elsif Time.zone.parse("#{@selected_date} #{time}") > Time.zone.now
