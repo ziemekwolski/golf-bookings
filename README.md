@@ -12,7 +12,7 @@ This is not a design assignment. While the app should be usable, it needn't look
 
 This exercise is not designed to take a long time. How much time you spend is totally up to you, but do not feel obligated to spend more than a few hours. With that said, your code should be of good quality: something that could easily be used as a base for a more complex production application.
 
-## Relase 1
+## Release 1
 
 Build a prototype Rails app which allows a user to book a tee-time at a single golf club.
 
